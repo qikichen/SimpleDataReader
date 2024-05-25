@@ -1,4 +1,5 @@
 import csv
+import json
 
 class SimpleDataReader:
     def __init__(self):
@@ -7,6 +8,7 @@ class SimpleDataReader:
         '''
         self.column_to_index = {}
         self.buffer = []
+        self.labels = []
 
     def read_data_csv(self, dataset, path, offset=0, size=None, header=False):
         '''
@@ -38,7 +40,41 @@ class SimpleDataReader:
             else:
                 data = [row for row in reader]
         self.buffer = data
-        return data
+        return self.buffer
+
+    def read_data_json(self, dataset, path, offset=0, size=None):
+        '''
+        Read data from a JSON file and store it in the buffer.
+        
+        Args:
+        - dataset: The name of the dataset (without the .json extension)
+        - path: The path to the directory containing the JSON file
+        - offset: The starting index to read from (default is 0)
+        - size: The number of records to read (default is None, meaning read all)
+        
+        Returns:
+        - The data read from the JSON file, stored in the buffer
+        '''
+        
+        file_path = f'{path}/{dataset}.json'
+        with open(file_path, 'r') as file:
+            data = json.load(file)
+        
+        # Get the keys (column names) from the first item in the data
+        keys = list(data[0].keys())
+        
+        # Map each key to its index and store it in column_to_index
+        for i in range(len(keys)):
+            self.column_to_index[keys[i]] = i
+        
+         # Apply offset and size to slice the data
+        if size is not None:
+            end_index = offset + size
+            self.buffer = data[offset:end_index]
+        else:
+            self.buffer = data[offset:]
+        
+        return self.buffer 
 
     def column(self, column_name):
         '''
