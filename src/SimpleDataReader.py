@@ -1,5 +1,7 @@
 import csv
 import json
+import os
+import tarfile
 
 class SimpleDataReader:
     def __init__(self):
@@ -93,3 +95,32 @@ class SimpleDataReader:
         for line in self.buffer:
              extracted_column.append(line[index])
         return  extracted_column
+
+    def unzip_and_read(self, tar_path, extract_path='extracted', dataset=None, file_type='csv', offset=0, size=None, header=False):
+        '''
+        Unzips a tar.gz file and reads the data from the extracted files.
+
+        Args:
+            tar_path (str): The path to the tar.gz file.
+            extract_path (str): The path where the extracted files will be stored.
+            dataset (str): The name of the dataset to read (without extension).
+            file_type (str): The type of file to read ('csv' or 'json').
+            offset (int): The number of rows to skip at the beginning of the file.
+            size (int, optional): The number of rows to read. If None, all rows are read.
+            header (bool, optional): Whether the CSV file has a header row (applicable if file_type is 'csv').
+
+        Returns:
+            list: A list containing the read data.
+        '''
+        if not os.path.exists(extract_path):
+            os.makedirs(extract_path)
+        
+        # Extract the tar.gz file and read
+        with tarfile.open(tar_path, 'r:gz') as tar:
+            tar.extractall(path=extract_path)
+        if file_type == 'csv':
+            return self.read_data_csv(dataset, extract_path, offset, size, header)
+        elif file_type == 'json':
+            return self.read_data_json(dataset, extract_path, offset, size)
+        else:
+            raise ValueError("Unsupported file type. Use 'csv' or 'json'.")
