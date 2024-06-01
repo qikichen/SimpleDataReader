@@ -24,6 +24,11 @@ class TestSimpleDataReader(unittest.TestCase):
         self.assertEqual(data[1], {"a": 4, "b": 5, "c": 6})
         self.assertEqual(data[2], {"a": 7, "b": 8, "c": 9})
 
+    def test_column_to_index(self) -> None:
+        sdr = SimpleDataReader()
+        _ = sdr.read_data_csv("test", "tests/data", header=True)
+        self.assertEqual(sdr.column("a"), ["1", "4", "7"])
+
 
 if __name__ == "__main__":
     unittest.main()
