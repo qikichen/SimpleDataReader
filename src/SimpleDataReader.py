@@ -112,8 +112,8 @@ class SimpleDataReader:
     def unzip_and_read(
         self,
         tar_path: str,
-        extract_path: str = "extracted",
         dataset: str,
+        extract_path: str = "extracted",
         file_type: str = "csv",
         offset: int = 0,
         size: int | None = None,
