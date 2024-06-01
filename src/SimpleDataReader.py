@@ -10,9 +10,9 @@ class SimpleDataReader:
         """
         Initialize the SimpleDataReader object.
         """
-        self.column_to_index = {}
-        self.buffer = []
-        self.labels = []
+        self.column_to_index: dict[str, int] = {}
+        self.buffer: list[Any] = []
+        self.labels: list[str] = []
 
     def read_data_csv(
         self,
@@ -40,9 +40,9 @@ class SimpleDataReader:
             reader = csv.reader(csvfile)
             # Create a dictionary that is useful for mapping to an index
             if header:
-                header = next(reader)
+                header_str = next(reader)
                 self.column_to_index = {
-                    column_name: index for index, column_name in enumerate(header)
+                    column_name: index for index, column_name in enumerate(header_str)
                 }
             # Skip lines until we reach offset
             for _ in range(offset):
